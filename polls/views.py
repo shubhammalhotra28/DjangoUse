@@ -4,28 +4,20 @@ from django.http import HttpResponse
 from .models import Question 
 from django.template import loader
 
+from django.shortcuts import get_object_or_404
+
 
 def index(request):
 
 	latest_question_list = Question.objects.order_by('-pub_date')[:5]
-	template = loader.get_template('polls/index.html')
-	context = {
-		'latest_question_list' : latest_question_list,
-	}
-	return HttpResponse(template.render(context,request))
+	context = {'latest_question_list' : latest_question_list,}
+	return render(request,'polls/index.html',context)
 
-
-	'''
-	latest_question_list = Question.objects.order_by('-pub_date')[:5]
-	output = ', '.join([q.question_text for q in latest_question_list])
-	return HttpResponse(output)
-
-	#return HttpResponse("Hello, world. You are at the polls index")
-	'''
 
 def detail(request,question_id):
-
-	return HttpResponse("you are looking at question %s" %question_id)
+	question = get_object_or_404(Question,pk=question_id)
+	return render(request,'polls/detail.html',{'question':question})
+	
 
 
 def results(request,question_id):
